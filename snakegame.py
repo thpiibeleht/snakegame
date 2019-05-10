@@ -234,7 +234,7 @@ class Snakegame:
                     elif 300 >= mouse_x >= 200 and 375 >= mouse_y >= 325:
                         return 0.043
 
-sg = Snakegame(50)
 
+sg = Snakegame(50)
 
 sg.run()
