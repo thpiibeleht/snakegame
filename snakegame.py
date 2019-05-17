@@ -1,12 +1,11 @@
 from random import *
 from time import sleep
 import pygame
-
+pygame.init()
 
 class Snakegame:
 
     def __init__(self, size):
-        pygame.init()
         self.size = size
         self.board = []
         for i in range(self.size):
@@ -15,6 +14,7 @@ class Snakegame:
         self.currentDirection = randint(0, 4)
         self.surface = self.initiate_game()
         self.deathevent = pygame.event.Event(pygame.USEREVENT)
+        self.multiplier = 0
 
     def add_snake(self):
         x = randint(5, self.size - 5)
@@ -96,7 +96,7 @@ class Snakegame:
 
         background_colour = (255, 255, 255)
 
-        screen = pygame.display.set_mode((500, 500))
+        screen = pygame.display.set_mode((500, 550))
         pygame.display.set_caption("Snake")
         screen.fill(background_colour)
 
@@ -117,6 +117,13 @@ class Snakegame:
 
     def clear_window(self):
         pygame.draw.rect(self.surface, (255, 255, 255), pygame.Rect(0, 0, 500, 500))
+        pygame.draw.rect(self.surface, (0, 0, 0), pygame.Rect(0, 500, 500, 50))
+
+    def get_score(self):
+        return (len(self.snake) - 1) * self.multiplier
+
+    def update_score(self):
+        self.display_text("Score: " + str(self.get_score()), (255, 255, 255), (250, 525), font=pygame.font.Font("C:\\Windows\\Fonts\\Verdana.ttf", 16))
 
     def run(self):
 
@@ -132,11 +139,13 @@ class Snakegame:
                         return
                 self.clear_window()
                 speed = self.display_difficulty_selection()
+                self.currentDirection = randint(0, 4)
                 start_screen_active = False
 
             self.clear_window()
             self.update_gameboard()
             self.draw_gameboard()
+            self.update_score()
             sleep(speed)
             self.change_direction()
             for event in pygame.event.get():
@@ -158,22 +167,23 @@ class Snakegame:
         elif keys[pygame.K_RIGHT] and self.currentDirection != 2:
             self.currentDirection = 1
 
+    def display_text(self, text, color, center, font=pygame.font.Font("C:\\Windows\\Fonts\\Verdana.ttf", 24)):
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.center = center
+        self.surface.blit(text_surface, text_rect)
+
     def display_start(self):
-        font = pygame.font.Font("C:\\Windows\\Fonts\\Verdana.ttf", 24)
 
         # Start button
         pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(200, 175, 100, 50))
-        start_text_surface = font.render("START", True, (0, 0, 0))
-        start_text_rect = start_text_surface.get_rect()
-        start_text_rect.center = (250, 200)
-        self.surface.blit(start_text_surface, start_text_rect)
+        self.display_text("START", (0, 0, 0), (250, 200))
 
         # Quit button
         pygame.draw.rect(self.surface, (255, 0, 0), pygame.Rect(200, 275, 100, 50))
-        quit_text_surface = font.render("QUIT", True, (0, 0, 0))
-        quit_text_rect = quit_text_surface.get_rect()
-        quit_text_rect.center = (250, 300)
-        self.surface.blit(quit_text_surface, quit_text_rect)
+        self.display_text("QUIT", (0, 0, 0), (250, 300))
+
+        pygame.draw.rect(self.surface, (0, 0, 0), pygame.Rect(0, 500, 500, 50))
 
         while True:
             pygame.display.flip()
@@ -193,32 +203,20 @@ class Snakegame:
         font = pygame.font.Font("C:\\Windows\\Fonts\\Verdana.ttf", 24)
 
         # Difficulty 1
-        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(200, 100, 100, 50))
-        diff1_text_surface = font.render("diff1", True, (0, 0, 0))
-        diff1_text_rect = diff1_text_surface.get_rect()
-        diff1_text_rect.center = (250, 125)
-        self.surface.blit(diff1_text_surface, diff1_text_rect)
+        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(150, 100, 200, 50))
+        self.display_text("EZ MODE", (0, 0, 0), (250, 125))
 
         # Difficulty 2
-        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(200, 175, 100, 50))
-        diff2_text_surface = font.render("diff2", True, (0, 0, 0))
-        diff2_text_rect = diff2_text_surface.get_rect()
-        diff2_text_rect.center = (250, 200)
-        self.surface.blit(diff2_text_surface, diff2_text_rect)
+        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(150, 175, 200, 50))
+        self.display_text("NOT BAD", (0, 0, 0), (250, 200))
 
         # Difficulty 3
-        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(200, 250, 100, 50))
-        diff3_text_surface = font.render("diff3", True, (0, 0, 0))
-        diff3_text_rect = diff3_text_surface.get_rect()
-        diff3_text_rect.center = (250, 275)
-        self.surface.blit(diff3_text_surface, diff3_text_rect)
+        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(150, 250, 200, 50))
+        self.display_text("SPEED DEMON", (0, 0, 0), (250, 275))
 
         # Difficulty 4
-        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(200, 325, 100, 50))
-        diff4_text_surface = font.render("diff4", True, (0, 0, 0))
-        diff4_text_rect = diff4_text_surface.get_rect()
-        diff4_text_rect.center = (250, 350)
-        self.surface.blit(diff4_text_surface, diff4_text_rect)
+        pygame.draw.rect(self.surface, (0, 255, 0), pygame.Rect(150, 325, 200, 50))
+        self.display_text("OVER 9000", (0, 0, 0), (250, 350))
 
         while True:
             pygame.display.flip()
@@ -226,12 +224,16 @@ class Snakegame:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     (mouse_x, mouse_y) = pygame.mouse.get_pos()
                     if 300 >= mouse_x >= 200 and 150 >= mouse_y >= 1:
+                        self.multiplier = 2
                         return 0.1
                     elif 300 >= mouse_x >= 200 and 225 >= mouse_y >= 175:
+                        self.multiplier = 5
                         return 0.08
                     elif 300 >= mouse_x >= 200 and 300 >= mouse_y >= 250:
+                        self.multiplier = 7
                         return 0.06
                     elif 300 >= mouse_x >= 200 and 375 >= mouse_y >= 325:
+                        self.multiplier = 10
                         return 0.043
 
 
